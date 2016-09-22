@@ -1,0 +1,49 @@
+// Enable ECSPI2 on J15
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <imx6q-pinfunc.h>
+
+/ {
+	compatible = "fsl,imx6q";
+
+	fragment@0 {
+		target = <&iomuxc>;
+		__overlay__ {
+			pinctrl_ecspi2: ecspi2grp {
+				fsl,pins = <
+					MX6QDL_PAD_DISP0_DAT15__GPIO5_IO09	0x0b0b1
+					MX6QDL_PAD_DISP0_DAT16__ECSPI2_MOSI	0x100b1
+					MX6QDL_PAD_DISP0_DAT17__ECSPI2_MISO	0x100b1
+					MX6QDL_PAD_DISP0_DAT18__GPIO5_IO12	0x0b0b1
+					MX6QDL_PAD_DISP0_DAT19__ECSPI2_SCLK	0x000b1
+				>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&ecspi2>;
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_ecspi2>;
+			fsl,spi-num-chipselects = <2>;
+			cs-gpios = <&gpio5 12 GPIO_ACTIVE_LOW>,
+				<&gpio5 9 GPIO_ACTIVE_LOW>;
+			status = "okay";
+
+			spidev@0 {
+				compatible = "spidev";
+				spi-max-frequency = <2000000>;
+				reg = <0>;
+			};
+
+			spidev@1 {
+				compatible = "spidev";
+				spi-max-frequency = <2000000>;
+				reg = <1>;
+			};
+		};
+	};
+};
