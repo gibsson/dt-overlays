@@ -23,6 +23,11 @@ function remove()
 
 cmd=add
 
+mnt=`mount`
+if ! [[ "$mnt" == *"configfs"* ]] ; then
+	mount -t configfs none /sys/kernel/config
+fi
+
 for i in $*; do
 	case $i in
 		add)
